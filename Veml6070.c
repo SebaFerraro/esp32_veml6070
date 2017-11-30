@@ -4,6 +4,14 @@
     Rset=270k -> 1T=112.5ms ->   5.625 uW/cm²/step
     Rset=300k -> 1T=125.0ms ->   6.250 uW/cm²/step
     Rset=600k -> 1T=250.0ms ->  12.500 uW/cm²/step
+
+≥ 11       ≥ 2055        ≥ 4109             ≥ 8217 Extreme
+8 to 10   1494 to 2054   2989 to 4108       5977 to 8216 Very High
+6, 7      1121 to 1494   2242 to 2988       4483 to 5976 High
+3 to 5    561 to 1120    1121 to 2241       2241 to 4482 Moderate
+0 to 2    0 to 560       0 to 1120
+
+
 */
 
 #include <stdio.h>
@@ -11,6 +19,7 @@
 #include <freertos/task.h>
 #include <driver/i2c.h>
 #include "sdkconfig.h"
+#include <math.h>
 
 #define I2C_VEML6070_ADDR_CMD 0x38
 #define I2C_VEML6070_ADDR1 0x38
@@ -28,8 +37,8 @@
 #define ACK_VAL                            0x0              /*!< I2C ack value */
 #define NACK_VAL                           0x1              /*!< I2C nack value */
 
-#define SDA_PIN GPIO_NUM_18
-#define SCL_PIN GPIO_NUM_19
+#define SDA_PIN GPIO_NUM_12
+#define SCL_PIN GPIO_NUM_13
 
 static char tag[] = "veml6070";
 
@@ -95,3 +104,20 @@ void i2c_master_init()
 	
 }
 
+uint8_t	i2c_veml6070_indexuv(uint16_t uv, uint8_t T){
+	uint8_t uvi=0;
+	uint16_t uvn=(int)roundf(uv/T);
+
+	if(uvn<(560)){
+		    uvi=(int)roundf(0.00357*uvn);
+                } else if(uvn<1120){
+		    uvi=(int)roundf(0.005377*uvn-1);
+                }else if(uvn<1494){
+		    uvi=(int)roundf(0.0053476*uvn-0.99);
+                }else if(uvn<2054){
+		    uvi=(int)roundf(0.005357*uvn-1.004);
+                }else {
+		    uvi=11;
+                }
+	return uvi;
+}

@@ -19,11 +19,11 @@
 #define ACK_VAL                            0x0              /*!< I2C ack value */
 #define NACK_VAL                           0x1              /*!< I2C nack value */
 
-#define SDA_PIN GPIO_NUM_18
-#define SCL_PIN GPIO_NUM_19
+#define SDA_PIN GPIO_NUM_12
+#define SCL_PIN GPIO_NUM_13
 
 // Prototipos de Funciones
 
 uint16_t i2c_veml6070_uv(uint8_t cmd_conf);
 void i2c_master_init();
-
+uint8_t i2c_veml6070_indexuv(uint16_t uv, uint8_t T);
