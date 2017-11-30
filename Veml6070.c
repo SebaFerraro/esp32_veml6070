@@ -4,14 +4,11 @@
     Rset=270k -> 1T=112.5ms ->   5.625 uW/cm²/step
     Rset=300k -> 1T=125.0ms ->   6.250 uW/cm²/step
     Rset=600k -> 1T=250.0ms ->  12.500 uW/cm²/step
-
 ≥ 11       ≥ 2055        ≥ 4109             ≥ 8217 Extreme
 8 to 10   1494 to 2054   2989 to 4108       5977 to 8216 Very High
 6, 7      1121 to 1494   2242 to 2988       4483 to 5976 High
 3 to 5    561 to 1120    1121 to 2241       2241 to 4482 Moderate
 0 to 2    0 to 560       0 to 1120
-
-
 */
 
 #include <stdio.h>
@@ -26,10 +23,10 @@
 #define I2C_VEML6070_ADDR2 0x39
 
 //Integration Time
-#define IT_1_2 0x0 //1/2T
-#define IT_1   0x1 //1T
-#define IT_2   0x2 //2T
-#define IT_4   0x3 //4T
+//#define IT_1_2 0x0 //1/2T
+//#define IT_1   0x1 //1T
+//#define IT_2   0x2 //2T
+//#define IT_4   0x3 //4T
 
 
 #define ACK_CHECK_EN                       0x1              /*!< I2C master will check ack from slave*/
@@ -37,10 +34,16 @@
 #define ACK_VAL                            0x0              /*!< I2C ack value */
 #define NACK_VAL                           0x1              /*!< I2C nack value */
 
-#define SDA_PIN GPIO_NUM_12
-#define SCL_PIN GPIO_NUM_13
+//#define SDA_PIN GPIO_NUM_34
+//#define SCL_PIN GPIO_NUM_35
+int SDA_PIN=34;
+int SCL_PIN=35;
 
-static char tag[] = "veml6070";
+
+void setPinsVeml6070(int sda,int scl){
+	SDA_PIN=sda;
+	SCL_PIN=scl;
+}
 
 uint16_t i2c_veml6070_uv(uint8_t cmd_conf) {
 	uint16_t uv=0;
