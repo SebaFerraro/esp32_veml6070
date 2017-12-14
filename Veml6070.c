@@ -57,7 +57,7 @@ uint16_t i2c_veml6070_uv(uint8_t cmd_conf) {
 	i2c_cmd_link_delete(cmd);
 	if (espRc != ESP_OK) {
                 printf("Error write I2C_VEML6070_ADDR_CMD: %d\n",espRc);
-		return 0;
+		return 65534;
 	}
 
         vTaskDelay(500 / portTICK_RATE_MS);
@@ -66,25 +66,25 @@ uint16_t i2c_veml6070_uv(uint8_t cmd_conf) {
         cmd = i2c_cmd_link_create();
 	i2c_master_start(cmd);
 	i2c_master_write_byte(cmd, (I2C_VEML6070_ADDR1 << 1) | I2C_MASTER_READ, ACK_CHECK_EN);
-	i2c_master_read_byte(cmd, &msb, ACK_CHECK_EN);
-	i2c_master_stop(cmd);
-	espRc = i2c_master_cmd_begin(I2C_NUM_0, cmd, 10/portTICK_RATE_MS);
-	i2c_cmd_link_delete(cmd);
-	if (espRc != ESP_OK) {
-                printf("Error read I2C_VEML6070_ADDR1: %d\n",espRc);
-		return 0;
-	}
-               
-	cmd = i2c_cmd_link_create();
-	i2c_master_start(cmd);
-	i2c_master_write_byte(cmd, (I2C_VEML6070_ADDR2 << 1) | I2C_MASTER_READ, ACK_CHECK_EN);
 	i2c_master_read_byte(cmd, &lsb, ACK_CHECK_EN);
 	i2c_master_stop(cmd);
 	espRc = i2c_master_cmd_begin(I2C_NUM_0, cmd, 10/portTICK_RATE_MS);
 	i2c_cmd_link_delete(cmd);
 	if (espRc != ESP_OK) {
+                printf("Error read I2C_VEML6070_ADDR1: %d\n",espRc);
+		return 65534;
+	}
+               
+	cmd = i2c_cmd_link_create();
+	i2c_master_start(cmd);
+	i2c_master_write_byte(cmd, (I2C_VEML6070_ADDR2 << 1) | I2C_MASTER_READ, ACK_CHECK_EN);
+	i2c_master_read_byte(cmd, &msb, ACK_CHECK_EN);
+	i2c_master_stop(cmd);
+	espRc = i2c_master_cmd_begin(I2C_NUM_0, cmd, 10/portTICK_RATE_MS);
+	i2c_cmd_link_delete(cmd);
+	if (espRc != ESP_OK) {
                 printf("Error read I2C_VEML6070_ADDR2: %d\n",espRc);
-		return 0;
+		return 65534;
 	}
 	uv=((uint16_t) msb<<8) | lsb;
 	//printf("Datos msb lsb : %d  %d  UV: %d\n", msb, lsb,uv);
