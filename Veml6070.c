@@ -50,37 +50,39 @@ uint16_t i2c_veml6070_uv(uint8_t cmd_conf) {
 	esp_err_t espRc;
 	i2c_cmd_handle_t cmd = i2c_cmd_link_create();
 	i2c_master_start(cmd);
-	i2c_master_write_byte(cmd, (I2C_VEML6070_ADDR_CMD << 1) | I2C_MASTER_WRITE, ACK_CHECK_EN);
+	i2c_master_write_byte(cmd, (I2C_VEML6070_ADDR_CMD << 1) | I2C_MASTER_WRITE, ACK_CHECK_DIS);
     	i2c_master_write_byte(cmd, cmd_conf, ACK_CHECK_EN);
 	i2c_master_stop(cmd);
-	espRc = i2c_master_cmd_begin(I2C_NUM_0, cmd, 10/portTICK_PERIOD_MS);
+	espRc = i2c_master_cmd_begin(I2C_NUM_0, cmd, 1000/portTICK_PERIOD_MS);
 	i2c_cmd_link_delete(cmd);
 	if (espRc != ESP_OK) {
                 printf("Error write I2C_VEML6070_ADDR_CMD: %d\n",espRc);
 		return 65534;
 	}
 
-        vTaskDelay(500 / portTICK_RATE_MS);
+        vTaskDelay(600 / portTICK_RATE_MS);
 		
     	uint8_t msb=0, lsb=0;
         cmd = i2c_cmd_link_create();
 	i2c_master_start(cmd);
-	i2c_master_write_byte(cmd, (I2C_VEML6070_ADDR1 << 1) | I2C_MASTER_READ, ACK_CHECK_EN);
-	i2c_master_read_byte(cmd, &lsb, ACK_CHECK_EN);
+	i2c_master_write_byte(cmd, (I2C_VEML6070_ADDR1 << 1) | I2C_MASTER_READ, ACK_CHECK_DIS);
+	i2c_master_read_byte(cmd, &lsb, NACK_VAL);
 	i2c_master_stop(cmd);
-	espRc = i2c_master_cmd_begin(I2C_NUM_0, cmd, 10/portTICK_RATE_MS);
+	espRc = i2c_master_cmd_begin(I2C_NUM_0, cmd, 1000/portTICK_RATE_MS);
 	i2c_cmd_link_delete(cmd);
 	if (espRc != ESP_OK) {
                 printf("Error read I2C_VEML6070_ADDR1: %d\n",espRc);
 		return 65534;
 	}
+        
+        vTaskDelay(100 / portTICK_RATE_MS);
                
 	cmd = i2c_cmd_link_create();
 	i2c_master_start(cmd);
-	i2c_master_write_byte(cmd, (I2C_VEML6070_ADDR2 << 1) | I2C_MASTER_READ, ACK_CHECK_EN);
-	i2c_master_read_byte(cmd, &msb, ACK_CHECK_EN);
+	i2c_master_write_byte(cmd, (I2C_VEML6070_ADDR2 << 1) | I2C_MASTER_READ, ACK_CHECK_DIS);
+	i2c_master_read_byte(cmd, &msb, NACK_VAL);
 	i2c_master_stop(cmd);
-	espRc = i2c_master_cmd_begin(I2C_NUM_0, cmd, 10/portTICK_RATE_MS);
+	espRc = i2c_master_cmd_begin(I2C_NUM_0, cmd, 1000/portTICK_RATE_MS);
 	i2c_cmd_link_delete(cmd);
 	if (espRc != ESP_OK) {
                 printf("Error read I2C_VEML6070_ADDR2: %d\n",espRc);
