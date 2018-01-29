@@ -36,8 +36,8 @@
 
 //#define SDA_PIN GPIO_NUM_34
 //#define SCL_PIN GPIO_NUM_35
-int SDA_PIN=34;
-int SCL_PIN=35;
+int SDA_PIN=22;
+int SCL_PIN=23;
 
 
 void setPinsVeml6070(int sda,int scl){
@@ -50,7 +50,7 @@ uint16_t i2c_veml6070_uv(uint8_t cmd_conf) {
 	esp_err_t espRc;
 	i2c_cmd_handle_t cmd = i2c_cmd_link_create();
 	i2c_master_start(cmd);
-	i2c_master_write_byte(cmd, (I2C_VEML6070_ADDR_CMD << 1) | I2C_MASTER_WRITE, ACK_CHECK_DIS);
+	i2c_master_write_byte(cmd, (I2C_VEML6070_ADDR_CMD << 1) | I2C_MASTER_WRITE, ACK_CHECK_EN);
     	i2c_master_write_byte(cmd, cmd_conf, ACK_CHECK_EN);
 	i2c_master_stop(cmd);
 	espRc = i2c_master_cmd_begin(I2C_NUM_0, cmd, 1000/portTICK_PERIOD_MS);
@@ -65,7 +65,7 @@ uint16_t i2c_veml6070_uv(uint8_t cmd_conf) {
     	uint8_t msb=0, lsb=0;
         cmd = i2c_cmd_link_create();
 	i2c_master_start(cmd);
-	i2c_master_write_byte(cmd, (I2C_VEML6070_ADDR1 << 1) | I2C_MASTER_READ, ACK_CHECK_DIS);
+	i2c_master_write_byte(cmd, (I2C_VEML6070_ADDR1 << 1) | I2C_MASTER_READ, ACK_CHECK_EN);
 	i2c_master_read_byte(cmd, &lsb, NACK_VAL);
 	i2c_master_stop(cmd);
 	espRc = i2c_master_cmd_begin(I2C_NUM_0, cmd, 1000/portTICK_RATE_MS);
@@ -79,7 +79,7 @@ uint16_t i2c_veml6070_uv(uint8_t cmd_conf) {
                
 	cmd = i2c_cmd_link_create();
 	i2c_master_start(cmd);
-	i2c_master_write_byte(cmd, (I2C_VEML6070_ADDR2 << 1) | I2C_MASTER_READ, ACK_CHECK_DIS);
+	i2c_master_write_byte(cmd, (I2C_VEML6070_ADDR2 << 1) | I2C_MASTER_READ, ACK_CHECK_EN);
 	i2c_master_read_byte(cmd, &msb, NACK_VAL);
 	i2c_master_stop(cmd);
 	espRc = i2c_master_cmd_begin(I2C_NUM_0, cmd, 1000/portTICK_RATE_MS);
@@ -100,9 +100,9 @@ void i2c_master_init()
 		.mode = I2C_MODE_MASTER,
 		.sda_io_num = SDA_PIN,
 		.scl_io_num = SCL_PIN,
-		.sda_pullup_en = GPIO_PULLUP_ENABLE,
-		.scl_pullup_en = GPIO_PULLUP_ENABLE,
-		.master.clk_speed = 1000000
+		.sda_pullup_en = GPIO_PULLUP_DISABLE,
+		.scl_pullup_en = GPIO_PULLUP_DISABLE,
+		.master.clk_speed = 100000
 	};
 	i2c_param_config(I2C_NUM_0, &i2c_config);
 	i2c_driver_install(I2C_NUM_0, I2C_MODE_MASTER, 0, 0, 0);
